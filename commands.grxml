@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE grammar PUBLIC "-//W3C//DTD GRAMMAR 1.0//EN" "http://www.w3.org/TR/speech-grammar/grammar.dtd">
+<grammar xmlns="http://www.w3.org/2001/06/grammar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:lang="en" xsi:schemaLocation="http://www.w3.org/2001/06/grammar                               http://www.w3.org/TR/speech-grammar/grammar.xsd" version="1.0" mode="voice" root="digits">
+  <rule id="digits" scope="public">
+    <item repeat="1-">
+      <one-of>
+        <item> open </item>
+        <item> close </item>
+        <item> skype </item>
+        <item> itunes </item>
+        <item> microsoft </item>
+        <item> word </item>
+        <item> excel </item>
+        <item> chrome </item>
+        <item> safari </item>
+        <item> exit </item>
+        <item> yes </item>
+        <item> no </item>
+      </one-of>
+    </item>
+  </rule>
+</grammar>
