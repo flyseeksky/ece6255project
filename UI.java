@@ -12,16 +12,16 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class UI implements ActionListener{
+	
 	private JFrame frame;
 	public JPanel btnPanel;
 	private JButton startBtn;
 	private JButton stopBtn;
 	private JTextArea text;
-	public boolean running = false;
-	public Controller cnt;
-	public Sandbox box;
-	public Thread th;
+	private boolean running = false;
+	private Controller cnt;
 	
+	// Setup GUI component
 	public void setupUI() throws IOException
 	{
 		frame = new JFrame();
@@ -47,7 +47,6 @@ public class UI implements ActionListener{
 		frame.setSize(500, 400);
 		frame.setVisible(true);
 		
-		box = new Sandbox();
 		cnt = new Controller();
 	}
 	
@@ -55,21 +54,37 @@ public class UI implements ActionListener{
 	{
 		text.append(str);
 	}
-	
 	public void setButtonState(boolean running)
 	{
 		startBtn.setEnabled(!running);
 		stopBtn.setEnabled(running);
 	}
-
+	
+	public JButton getStopButton()
+	{ 	return stopBtn; }
+	public JButton getStartButto()
+	{	return startBtn; }
+	
+	public void setRunning(boolean running)
+	{
+		this.running = running;
+	}
+	
+	public boolean getRunning()
+	{
+		return running;
+	}
+	
+	public Controller getController()
+	{
+		return cnt;
+	}
 	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if( e.getSource() == stopBtn )
 		{
-//			cnt.Stop();
 			running = false;
 			setButtonState(false);
 		}
@@ -78,102 +93,16 @@ public class UI implements ActionListener{
 			setButtonState(true);
 			System.out.println("start clicked!");
 			running = true;
-			th.start();
+			// start sandbox thread which runs as background thread
+			// and process all the recognition stuff
+			new Thread(new Sandbox(this)).start();
 		}
-	}
-	
-	public class Sandbox implements Runnable, ActionListener
-	{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			if( e.getSource() == stopBtn )
-			{
-				running = false;
-			}
-			else
-			{
-				running = true;
-				try {
-					go();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			System.out.println("Sandbox running!");
-			try {
-				go();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		public void go() throws IOException
-		{
-			System.out.println("go is running");
-			startBtn.setEnabled(false);
-			stopBtn.setEnabled(true);
-			String utterance;
-			while( running )
-			{
-				
-				cnt.recognizer.startRecognition(true);
-				text.append("Start listenging! Please speak ... ");
-				SpeechResult result = cnt.recognizer.getResult();
-				utterance = result.getHypothesis();
-				cnt.recognizer.stopRecognition();
-				text.append("You've just spoke: " + utterance + "\n\n");
-				if( !proessCMD(utterance) )
-				{
-					running = false;
-//					cnt.Stop();
-					break;
-				}
-				
-			}
-			System.out.println("Stopped running! Click start button to start again!\n");
-		}
-		
-		private boolean proessCMD(String utterance) throws IOException {
-			// TODO Auto-generated method stub
-		    if (utterance.contains("open skype")) {
-		    	Runtime.getRuntime().exec("open -a Skype");  	 
-		    }
-		    else if (utterance.contains("close skype")) {
-		    	Runtime.getRuntime().exec("pkill Skype");  
-		    }
-		    else if (utterance.contains("open safari")) {
-		    	Runtime.getRuntime().exec("open -a Safari");  
-		    }
-		    else if (utterance.contains("close safari")) {
-		    	Runtime.getRuntime().exec("pkill Safari");  
-		    }
-		    else if (utterance.contains("open itunes")) {
-		    	Runtime.getRuntime().exec("open -a iTunes");  
-		    }
-		    else if (utterance.contains("close itunes")) {
-		    	Runtime.getRuntime().exec("pkill iTunes");  
-		    }
-			return true;
-		}
-
-		
 	}
 	
 	
 	public static void main(String[] args) throws IOException {
 		UI app = new UI();
 		app.setupUI();
-		
-		app.th = new Thread(app.box);
 	}
 
 }
