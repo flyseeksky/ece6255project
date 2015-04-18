@@ -1,12 +1,14 @@
 package edu.cmu.sphinx.projectTest;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.result.Result;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -34,6 +36,12 @@ public class UI implements ActionListener{
 		text.setEditable(false);
 		stopBtn.setEnabled(false);
 		
+		Font font = new Font("Arial",Font.BOLD, 18);
+		text.setFont(font);
+		
+		DefaultCaret caret = (DefaultCaret)text.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
 		startBtn.addActionListener(this);
 		stopBtn.addActionListener(this);
 		
@@ -48,12 +56,15 @@ public class UI implements ActionListener{
 		frame.setVisible(true);
 		
 		cnt = new Controller();
+		text.append("Welcome!\nThis is the command recognition program.\n");
+		text.append("Click start button to begin.\n");
 	}
 	
 	public void appendText(String str)
 	{
 		text.append(str);
 	}
+	
 	public void setButtonState(boolean running)
 	{
 		startBtn.setEnabled(!running);
@@ -80,7 +91,6 @@ public class UI implements ActionListener{
 		return cnt;
 	}
 	
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if( e.getSource() == stopBtn )
@@ -98,8 +108,7 @@ public class UI implements ActionListener{
 			new Thread(new Sandbox(this)).start();
 		}
 	}
-	
-	
+		
 	public static void main(String[] args) throws IOException {
 		UI app = new UI();
 		app.setupUI();
